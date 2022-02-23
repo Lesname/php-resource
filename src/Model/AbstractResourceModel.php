@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace LessResource\Model;
 
 use LessValueObject\Composite\ForeignReference;
-use LessValueObject\String\Format\Resource\Id;
+use LessValueObject\String\Format\Resource\Identifier;
 use LessValueObject\String\Format\Resource\Type;
 
 /**
@@ -13,7 +13,7 @@ use LessValueObject\String\Format\Resource\Type;
 abstract class AbstractResourceModel implements ResourceModel
 {
     public function __construct(
-        public Id $id,
+        public Identifier $id,
         public Type $type,
     ) {}
 
