@@ -5,7 +5,7 @@ namespace LessResourceTest\Model;
 
 use LessResource\Model\AbstractResourceModel;
 use LessValueObject\Composite\ForeignReference;
-use LessValueObject\String\Format\Resource\Id;
+use LessValueObject\String\Format\Resource\Identifier;
 use LessValueObject\String\Format\Resource\Type;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +16,7 @@ final class AbstractResourceModelTest extends TestCase
 {
     public function testGetForeignReference(): void
     {
-        $id = new Id('0eb72b3f-7ab6-4c14-87f2-83ab8813eb15');
+        $id = new Identifier('0eb72b3f-7ab6-4c14-87f2-83ab8813eb15');
         $type = new Type('fiz');
 
         $mock = $this->getMockForAbstractClass(
