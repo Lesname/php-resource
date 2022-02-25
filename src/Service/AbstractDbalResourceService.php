@@ -46,12 +46,9 @@ abstract class AbstractDbalResourceService implements ResourceService
      */
     public function exists(Identifier $id): bool
     {
-        $builder = $this->connection->createQueryBuilder();
+        $builder = $this->createBaseBuilder();
         $builder->select('count(*)');
         $this->applyWhereId($builder, $id);
-
-        $applier = $this->getResourceApplier();
-        $builder->from("`{$applier->getTableName()}`", $applier->getTableAlias());
 
         return $builder->fetchOne() > 0;
     }
@@ -180,6 +177,16 @@ abstract class AbstractDbalResourceService implements ResourceService
     {
         $builder = $this->connection->createQueryBuilder();
         $this->getResourceApplier()->apply($builder);
+
+        return $builder;
+    }
+
+    protected function createBaseBuilder(): QueryBuilder
+    {
+        $builder = $this->connection->createQueryBuilder();
+
+        $applier = $this->getResourceApplier();
+        $builder->from("`{$applier->getTableName()}`", $applier->getTableAlias());
 
         return $builder;
     }
