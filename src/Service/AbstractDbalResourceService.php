@@ -220,7 +220,7 @@ abstract class AbstractDbalResourceService implements ResourceService
     {
         foreach ($this->getJsonFields() as $field) {
             if (isset($array[$field]) && is_string($array[$field])) {
-                $array[$field] = json_decode($array[$field], flags: JSON_THROW_ON_ERROR);
+                $array[$field] = json_decode($array[$field],  true, flags: JSON_THROW_ON_ERROR);
             }
         }
 
