@@ -6,6 +6,7 @@ namespace LessResource\Service;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
+use JsonException;
 use LessDatabase\Query\Builder\Applier\PaginateApplier;
 use LessHydrator\Hydrator;
 use LessResource\Model\ResourceModel;
@@ -195,13 +196,43 @@ abstract class AbstractDbalResourceService implements ResourceService
      * @param array<string, mixed> $array
      *
      * @return T
+     *
+     * @throws JsonException
      */
     protected function hydrateResource(array $array): ResourceModel
     {
         return $this->hydrator->hydrate(
             $this->getResourceModelClass(),
-            $this->unflatten($array),
+            $this->decode($array),
         );
+    }
+
+    /**
+     * @param array<string, mixed> $array
+     *
+     * @return array<string, mixed>
+     *
+     * @throws JsonException
+     *
+     * @psalm-suppress MixedAssignment
+     */
+    protected function decode(array $array): array
+    {
+        foreach ($this->getJsonFields() as $field) {
+            if (isset($array[$field]) && is_string($array[$field])) {
+                $array[$field] = json_decode($array[$field], flags: JSON_THROW_ON_ERROR);
+            }
+        }
+
+        return $this->unflatten($array);
+    }
+
+    /**
+     * @return iterable<string>
+     */
+    protected function getJsonFields(): iterable
+    {
+        return [];
     }
 
     /**
@@ -211,7 +242,7 @@ abstract class AbstractDbalResourceService implements ResourceService
      *
      * @psalm-suppress MixedAssignment
      */
-    private function unflatten(array $array): array
+    protected function unflatten(array $array): array
     {
         $output = [];
 
