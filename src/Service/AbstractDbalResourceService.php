@@ -7,7 +7,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use JsonException;
-use LessDatabase\Query\Builder\Applier\PaginateApplier;
 use LessHydrator\Hydrator;
 use LessResource\Model\ResourceModel;
 use LessResource\Service\Dbal\Applier\ResourceApplier;
@@ -15,19 +14,14 @@ use LessResource\Service\Exception\AbstractNoResourceWithId;
 use LessResource\Service\Exception\NoResourceFromBuilder;
 use LessResource\Set\ArrayResourceSet;
 use LessResource\Set\ResourceSet;
-use LessValueObject\Composite\Paginate;
 use LessValueObject\String\Format\Resource\Identifier;
 use RuntimeException;
 
 /**
- * @implements ResourceService<T>
- *
  * @template T of \LessResource\Model\ResourceModel
  */
 abstract class AbstractDbalResourceService implements ResourceService
 {
-    abstract protected function getIdColumn(): string;
-
     abstract protected function getResourceApplier(): ResourceApplier;
 
     /**
@@ -35,11 +29,14 @@ abstract class AbstractDbalResourceService implements ResourceService
      */
     abstract protected function getResourceModelClass(): string;
 
-    abstract protected function makeNoResourceWithIdException(Identifier $id): AbstractNoResourceWithId;
+    /**
+     * @return class-string<AbstractNoResourceWithId>
+     */
+    abstract protected function getNoResourceWithIdClass(): string;
 
     public function __construct(
-        protected Connection $connection,
-        protected Hydrator $hydrator
+        protected readonly Connection $connection,
+        protected readonly Hydrator $hydrator
     ) {}
 
     /**
@@ -58,39 +55,6 @@ abstract class AbstractDbalResourceService implements ResourceService
      * @throws AbstractNoResourceWithId
      * @throws Exception
      */
-    public function getWithId(Identifier $id): ResourceModel
-    {
-        $builder = $this->createResourceBuilder();
-        $this->applyWhereId($builder, $id);
-
-        try {
-            return $this->getResourceFromBuilder($builder);
-        } catch (NoResourceFromBuilder) {
-            throw $this->makeNoResourceWithIdException($id);
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function getByLastActivity(Paginate $paginate): ResourceSet
-    {
-        $builder = $this->connection->createQueryBuilder();
-
-        $applier = $this->getResourceApplier();
-        $applier->apply($builder);
-
-        (new PaginateApplier($paginate))->apply($builder);
-
-        $builder->addOrderBy("{$applier->getTableAlias()}.`activity_last`", 'desc');
-
-        return $this->getResourceSetFromBuilder($builder);
-    }
-
-    /**
-     * @throws AbstractNoResourceWithId
-     * @throws Exception
-     */
     public function getCurrentVersion(Identifier $id): int
     {
         $builder = $this->connection->createQueryBuilder();
@@ -101,18 +65,23 @@ abstract class AbstractDbalResourceService implements ResourceService
         $builder->from("`{$applier->getTableName()}`", $applier->getTableAlias());
 
         $result = $builder->fetchOne();
-        assert(is_string($result) || $result === false);
+        assert(
+            (is_string($result) && ctype_digit($result))
+            || is_int($result)
+            || $result === false
+        );
 
-        if ($result === false) {
-            throw $this->makeNoResourceWithIdException($id);
-        }
+        $class = $this->getNoResourceWithIdClass();
 
-        return (int)$result;
+        return $result === false
+            ? throw new $class($id)
+            : (int)$result;
     }
 
     /**
      * @return T
      *
+     * @throws JsonException
      * @throws NoResourceFromBuilder
      * @throws Exception
      */
@@ -130,6 +99,7 @@ abstract class AbstractDbalResourceService implements ResourceService
     /**
      * @return array<int, T>
      *
+     * @throws JsonException
      * @throws Exception
      */
     protected function getResourcesFromBuilder(QueryBuilder $builder): array
@@ -143,6 +113,7 @@ abstract class AbstractDbalResourceService implements ResourceService
     /**
      * @return ResourceSet<T>
      *
+     * @throws JsonException
      * @throws Exception
      */
     protected function getResourceSetFromBuilder(QueryBuilder $builder): ResourceSet
@@ -277,5 +248,12 @@ abstract class AbstractDbalResourceService implements ResourceService
     {
         $builder->andWhere($this->getIdColumn() . ' = :id');
         $builder->setParameter('id', $id);
+    }
+
+    protected function getIdColumn(): string
+    {
+        $applier = $this->getResourceApplier();
+
+        return "{$applier->getTableAlias()}.id";
     }
 }
