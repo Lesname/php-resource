@@ -26,8 +26,6 @@ use RuntimeException;
  */
 abstract class AbstractDbalResourceService implements ResourceService
 {
-    abstract protected function getIdColumn(): string;
-
     abstract protected function getResourceApplier(): ResourceApplier;
 
     /**
@@ -35,7 +33,10 @@ abstract class AbstractDbalResourceService implements ResourceService
      */
     abstract protected function getResourceModelClass(): string;
 
-    abstract protected function makeNoResourceWithIdException(Identifier $id): AbstractNoResourceWithId;
+    /**
+     * @return class-string<AbstractNoResourceWithId>
+     */
+    abstract protected function getNoResourceWithIdClass(): string;
 
     public function __construct(
         protected Connection $connection,
@@ -66,7 +67,8 @@ abstract class AbstractDbalResourceService implements ResourceService
         try {
             return $this->getResourceFromBuilder($builder);
         } catch (NoResourceFromBuilder) {
-            throw $this->makeNoResourceWithIdException($id);
+            $class = $this->getNoResourceWithIdClass();
+            throw new $class($id);
         }
     }
 
@@ -104,7 +106,8 @@ abstract class AbstractDbalResourceService implements ResourceService
         assert(is_string($result) || $result === false);
 
         if ($result === false) {
-            throw $this->makeNoResourceWithIdException($id);
+            $class = $this->getNoResourceWithIdClass();
+            throw new $class($id);
         }
 
         return (int)$result;
@@ -113,6 +116,7 @@ abstract class AbstractDbalResourceService implements ResourceService
     /**
      * @return T
      *
+     * @throws JsonException
      * @throws NoResourceFromBuilder
      * @throws Exception
      */
@@ -130,6 +134,7 @@ abstract class AbstractDbalResourceService implements ResourceService
     /**
      * @return array<int, T>
      *
+     * @throws JsonException
      * @throws Exception
      */
     protected function getResourcesFromBuilder(QueryBuilder $builder): array
@@ -143,6 +148,7 @@ abstract class AbstractDbalResourceService implements ResourceService
     /**
      * @return ResourceSet<T>
      *
+     * @throws JsonException
      * @throws Exception
      */
     protected function getResourceSetFromBuilder(QueryBuilder $builder): ResourceSet
@@ -277,5 +283,12 @@ abstract class AbstractDbalResourceService implements ResourceService
     {
         $builder->andWhere($this->getIdColumn() . ' = :id');
         $builder->setParameter('id', $id);
+    }
+
+    protected function getIdColumn(): string
+    {
+        $applier = $this->getResourceApplier();
+
+        return "{$applier->getTableAlias()}.id";
     }
 }

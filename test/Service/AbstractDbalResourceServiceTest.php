@@ -33,7 +33,6 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->willReturn('table');
 
         $applier
-            ->expects(self::once())
             ->method('getTableAlias')
             ->willReturn('t');
 
@@ -46,7 +45,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.`id` = :id')
+            ->with('t.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -79,14 +78,8 @@ final class AbstractDbalResourceServiceTest extends TestCase
             [$connection, $hydrator],
         );
         $mock
-            ->expects(self::once())
             ->method('getResourceApplier')
             ->willReturn($applier);
-
-        $mock
-            ->expects(self::once())
-            ->method('getIdColumn')
-            ->willReturn('t.`id`');
 
         self::assertTrue($mock->exists($id));
     }
@@ -102,7 +95,6 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->willReturn('table');
 
         $applier
-            ->expects(self::once())
             ->method('getTableAlias')
             ->willReturn('t');
 
@@ -115,7 +107,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.`id` = :id')
+            ->with('t.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -148,14 +140,8 @@ final class AbstractDbalResourceServiceTest extends TestCase
             [$connection, $hydrator],
         );
         $mock
-            ->expects(self::once())
             ->method('getResourceApplier')
             ->willReturn($applier);
-
-        $mock
-            ->expects(self::once())
-            ->method('getIdColumn')
-            ->willReturn('t.`id`');
 
         self::assertFalse($mock->exists($id));
     }
@@ -170,7 +156,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.`id` = :id')
+            ->with('t.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -195,6 +181,10 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->expects(self::once())
             ->method('apply')
             ->with($builder);
+
+        $applier
+            ->method('getTableAlias')
+            ->willReturn('t');
 
         $connection = $this->createMock(Connection::class);
         $connection
@@ -225,7 +215,6 @@ final class AbstractDbalResourceServiceTest extends TestCase
             [$connection, $hydrator],
         );
         $mock
-            ->expects(self::once())
             ->method('getResourceApplier')
             ->willReturn($applier);
 
@@ -233,11 +222,6 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->expects(self::once())
             ->method('getResourceModelClass')
             ->willReturn(ResourceModel::class);
-
-        $mock
-            ->expects(self::once())
-            ->method('getIdColumn')
-            ->willReturn('t.`id`');
 
         self::assertSame($model, $mock->getWithId($id));
     }
@@ -255,7 +239,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.`id` = :id')
+            ->with('t.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -275,6 +259,10 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->method('apply')
             ->with($builder);
 
+        $applier
+            ->method('getTableAlias')
+            ->willReturn('t');
+
         $connection = $this->createMock(Connection::class);
         $connection
             ->expects(self::once())
@@ -288,20 +276,13 @@ final class AbstractDbalResourceServiceTest extends TestCase
             [$connection, $hydrator],
         );
         $mock
-            ->expects(self::once())
             ->method('getResourceApplier')
             ->willReturn($applier);
 
         $mock
             ->expects(self::once())
-            ->method('makeNoResourceWithIdException')
-            ->with($id)
-            ->willReturn($e);
-
-        $mock
-            ->expects(self::once())
-            ->method('getIdColumn')
-            ->willReturn('t.`id`');
+            ->method('getNoResourceWithIdClass')
+            ->willReturn($e::class);
 
         $mock->getWithId($id);
     }
@@ -351,7 +332,6 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->with($setBuilder);
 
         $applier
-            ->expects(self::once())
             ->method('getTableAlias')
             ->willReturn('t');
 
@@ -384,7 +364,6 @@ final class AbstractDbalResourceServiceTest extends TestCase
             [$connection, $hydrator],
         );
         $mock
-            ->expects(self::once())
             ->method('getResourceApplier')
             ->willReturn($applier);
 
@@ -392,11 +371,6 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->expects(self::once())
             ->method('getResourceModelClass')
             ->willReturn(ResourceModel::class);
-
-        $mock
-            ->expects(self::once())
-            ->method('getIdColumn')
-            ->willReturn('t.`id`');
 
         $paginate = new Paginate(new PerPage(4), new Page(3));
         $set = $mock->getByLastActivity($paginate);
@@ -419,7 +393,6 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->willReturn('table');
 
         $applier
-            ->expects(self::once())
             ->method('getTableAlias')
             ->willReturn('t');
 
@@ -432,7 +405,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.`id` = :id')
+            ->with('t.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -465,14 +438,8 @@ final class AbstractDbalResourceServiceTest extends TestCase
             [$connection, $hydrator],
         );
         $mock
-            ->expects(self::once())
             ->method('getResourceApplier')
             ->willReturn($applier);
-
-        $mock
-            ->expects(self::once())
-            ->method('getIdColumn')
-            ->willReturn('t.`id`');
 
         self::assertSame(2, $mock->getCurrentVersion($id));
     }
@@ -493,7 +460,6 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->willReturn('table');
 
         $applier
-            ->expects(self::once())
             ->method('getTableAlias')
             ->willReturn('t');
 
@@ -506,7 +472,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.`id` = :id')
+            ->with('t.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -539,20 +505,13 @@ final class AbstractDbalResourceServiceTest extends TestCase
             [$connection, $hydrator],
         );
         $mock
-            ->expects(self::once())
             ->method('getResourceApplier')
             ->willReturn($applier);
 
         $mock
             ->expects(self::once())
-            ->method('getIdColumn')
-            ->willReturn('t.`id`');
-
-        $mock
-            ->expects(self::once())
-            ->method('makeNoResourceWithIdException')
-            ->with($id)
-            ->willReturn($e);
+            ->method('getNoResourceWithIdClass')
+            ->willReturn($e::class);
 
         $mock->getCurrentVersion($id);
     }
@@ -567,7 +526,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.`id` = :id')
+            ->with('t.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -593,6 +552,10 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->method('apply')
             ->with($builder);
 
+        $applier
+            ->method('getTableAlias')
+            ->willReturn('t');
+
         $connection = $this->createMock(Connection::class);
         $connection
             ->expects(self::once())
@@ -609,7 +572,6 @@ final class AbstractDbalResourceServiceTest extends TestCase
             [$connection, $hydrator],
         );
         $mock
-            ->expects(self::once())
             ->method('getResourceApplier')
             ->willReturn($applier);
 
@@ -617,11 +579,6 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->expects(self::once())
             ->method('getResourceModelClass')
             ->willReturn(ResourceModel::class);
-
-        $mock
-            ->expects(self::once())
-            ->method('getIdColumn')
-            ->willReturn('t.`id`');
 
         $mock->getWithId($id);
     }
@@ -636,7 +593,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.`id` = :id')
+            ->with('t.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -662,6 +619,10 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->method('apply')
             ->with($builder);
 
+        $applier
+            ->method('getTableAlias')
+            ->willReturn('t');
+
         $connection = $this->createMock(Connection::class);
         $connection
             ->expects(self::once())
@@ -678,7 +639,6 @@ final class AbstractDbalResourceServiceTest extends TestCase
             [$connection, $hydrator],
         );
         $mock
-            ->expects(self::once())
             ->method('getResourceApplier')
             ->willReturn($applier);
 
@@ -686,11 +646,6 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->expects(self::once())
             ->method('getResourceModelClass')
             ->willReturn(ResourceModel::class);
-
-        $mock
-            ->expects(self::once())
-            ->method('getIdColumn')
-            ->willReturn('t.`id`');
 
         $mock->getWithId($id);
     }
