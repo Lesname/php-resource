@@ -18,7 +18,7 @@ abstract class AbstractResourceApplier implements ResourceApplier
      */
     public function apply(QueryBuilder $builder): QueryBuilder
     {
-        $builder->from("`{$this->getTableName()}`", $this->getTableAlias());
+        $builder->from("`{$this->getTableName()}`", "`{$this->getTableAlias()}`");
 
         $applier = SelectApplier::fromNested($this->getFields());
         $applier->apply($builder);

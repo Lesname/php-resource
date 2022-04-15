@@ -40,7 +40,7 @@ final class AbstractResourceApplierTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('from')
-            ->with('`table`', 't')
+            ->with('`table`', '`t`')
             ->willReturn($builder);
 
         $builder
