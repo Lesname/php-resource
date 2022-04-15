@@ -40,12 +40,12 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('from')
-            ->with('`table`', 't');
+            ->with('`table`', '`t`');
 
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.id = :id')
+            ->with('`t`.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -102,12 +102,12 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('from')
-            ->with('`table`', 't');
+            ->with('`table`', '`t`');
 
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.id = :id')
+            ->with('`t`.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -156,7 +156,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.id = :id')
+            ->with('`t`.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -239,7 +239,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.id = :id')
+            ->with('`t`.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -295,7 +295,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $setBuilder
             ->expects(self::once())
             ->method('addOrderBy')
-            ->with('t.`activity_last`', 'desc')
+            ->with('`t`.`activity_last`', 'desc')
             ->willReturn($setBuilder);
 
         $setBuilder
@@ -400,12 +400,12 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('from')
-            ->with('`table`', 't');
+            ->with('`table`', '`t`');
 
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.id = :id')
+            ->with('`t`.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -467,12 +467,12 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('from')
-            ->with('`table`', 't');
+            ->with('`table`', '`t`');
 
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.id = :id')
+            ->with('`t`.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -526,7 +526,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.id = :id')
+            ->with('`t`.id = :id')
             ->willReturn($builder);
 
         $builder
@@ -593,7 +593,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('t.id = :id')
+            ->with('`t`.id = :id')
             ->willReturn($builder);
 
         $builder
