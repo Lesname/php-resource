@@ -281,7 +281,7 @@ abstract class AbstractDbalResourceService implements ResourceService
 
     protected function applyWhereId(QueryBuilder $builder, Identifier $id): void
     {
-        $builder->andWhere($this->getIdColumn() . ' = :id');
+        $builder->andWhere("{$this->getIdColumn()} = :id");
         $builder->setParameter('id', $id);
     }
 
@@ -289,6 +289,6 @@ abstract class AbstractDbalResourceService implements ResourceService
     {
         $applier = $this->getResourceApplier();
 
-        return "{$applier->getTableAlias()}.id";
+        return "`{$applier->getTableAlias()}`.id";
     }
 }
