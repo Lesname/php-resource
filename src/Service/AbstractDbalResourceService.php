@@ -84,7 +84,7 @@ abstract class AbstractDbalResourceService implements ResourceService
 
         (new PaginateApplier($paginate))->apply($builder);
 
-        $builder->addOrderBy("{$applier->getTableAlias()}.`activity_last`", 'desc');
+        $builder->addOrderBy("`{$applier->getTableAlias()}`.`activity_last`", 'desc');
 
         return $this->getResourceSetFromBuilder($builder);
     }
@@ -100,7 +100,7 @@ abstract class AbstractDbalResourceService implements ResourceService
         $this->applyWhereId($builder, $id);
 
         $applier = $this->getResourceApplier();
-        $builder->from("`{$applier->getTableName()}`", $applier->getTableAlias());
+        $builder->from("`{$applier->getTableName()}`", "`{$applier->getTableAlias()}`");
 
         $result = $builder->fetchOne();
         assert(is_string($result) || $result === false);
@@ -193,7 +193,7 @@ abstract class AbstractDbalResourceService implements ResourceService
         $builder = $this->connection->createQueryBuilder();
 
         $applier = $this->getResourceApplier();
-        $builder->from("`{$applier->getTableName()}`", $applier->getTableAlias());
+        $builder->from("`{$applier->getTableName()}`", "`{$applier->getTableAlias()}`");
 
         return $builder;
     }
