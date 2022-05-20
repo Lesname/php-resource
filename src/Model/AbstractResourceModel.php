@@ -10,6 +10,10 @@ use LessValueObject\String\Format\Resource\Type;
 
 /**
  * @psalm-immutable
+ *
+ * @deprecated AbstractResourceModel will be dropped
+ *
+ * @psalm-suppress DeprecatedClass
  */
 abstract class AbstractResourceModel extends AbstractCompositeValueObject implements ResourceModel
 {
