@@ -58,6 +58,7 @@ abstract class AbstractDbalResourceService implements ResourceService
     /**
      * @throws AbstractNoResourceWithId
      * @throws Exception
+     * @throws JsonException
      */
     public function getWithId(Identifier $id): ResourceModel
     {
@@ -74,8 +75,16 @@ abstract class AbstractDbalResourceService implements ResourceService
 
     /**
      * @throws Exception
+     * @throws JsonException
      */
     public function getByLastActivity(Paginate $paginate): ResourceSet
+    {
+        return $this->getResourceSetFromBuilder(
+            $this->getByLastActivityBuilder($paginate),
+        );
+    }
+
+    protected function getByLastActivityBuilder(Paginate $paginate): QueryBuilder
     {
         $builder = $this->connection->createQueryBuilder();
 
@@ -86,7 +95,7 @@ abstract class AbstractDbalResourceService implements ResourceService
 
         $builder->addOrderBy("`{$applier->getTableAlias()}`.`activity_last`", 'desc');
 
-        return $this->getResourceSetFromBuilder($builder);
+        return $builder;
     }
 
     /**
