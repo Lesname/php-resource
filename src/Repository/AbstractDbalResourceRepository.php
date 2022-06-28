@@ -186,7 +186,10 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
         $countBuilder->setMaxResults(1);
         $countBuilder->setFirstResult(0);
 
-        return (int)$countBuilder->fetchOne();
+        $result = $countBuilder->fetchOne();
+        assert(is_string($result) || is_int($result));
+
+        return (int)$result;
     }
 
     protected function createResourceBuilder(): QueryBuilder
