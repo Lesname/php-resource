@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResourceTest\Service\Dbal\Applier;
+namespace LessResourceTest\Repository\Dbal\Applier;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use LessResource\Service\Dbal\Applier\AbstractResourceApplier;
+use LessResource\Repository\Dbal\Applier\AbstractResourceApplier;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \LessResource\Service\Dbal\Applier\AbstractResourceApplier
+ * @covers \LessResource\Repository\Dbal\Applier\AbstractResourceApplier
  */
 final class AbstractResourceApplierTest extends TestCase
 {

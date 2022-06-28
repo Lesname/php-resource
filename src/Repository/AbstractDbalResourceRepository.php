@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResource\Service;
+namespace LessResource\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -10,9 +10,9 @@ use JsonException;
 use LessDatabase\Query\Builder\Applier\PaginateApplier;
 use LessHydrator\Hydrator;
 use LessResource\Model\ResourceModel;
-use LessResource\Service\Dbal\Applier\ResourceApplier;
-use LessResource\Service\Exception\AbstractNoResourceWithId;
-use LessResource\Service\Exception\NoResourceFromBuilder;
+use LessResource\Repository\Dbal\Applier\ResourceApplier;
+use LessResource\Repository\Exception\AbstractNoResourceWithId;
+use LessResource\Repository\Exception\NoResourceFromBuilder;
 use LessResource\Set\ArrayResourceSet;
 use LessResource\Set\ResourceSet;
 use LessValueObject\Composite\Paginate;
@@ -20,11 +20,11 @@ use LessValueObject\String\Format\Resource\Identifier;
 use RuntimeException;
 
 /**
- * @implements ResourceService<T>
+ * @implements ResourceRepository<T>
  *
  * @template T of \LessResource\Model\ResourceModel
  */
-abstract class AbstractDbalResourceService implements ResourceService
+abstract class AbstractDbalResourceRepository implements ResourceRepository
 {
     abstract protected function getResourceApplier(): ResourceApplier;
 
@@ -186,7 +186,10 @@ abstract class AbstractDbalResourceService implements ResourceService
         $countBuilder->setMaxResults(1);
         $countBuilder->setFirstResult(0);
 
-        return (int)$countBuilder->fetchOne();
+        $result = $countBuilder->fetchOne();
+        assert(is_string($result) || is_int($result));
+
+        return (int)$result;
     }
 
     protected function createResourceBuilder(): QueryBuilder

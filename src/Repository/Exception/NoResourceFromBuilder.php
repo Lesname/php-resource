@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResource\Service\Exception;
+namespace LessResource\Repository\Exception;
 
 use LessResource\Exception\AbstractException;
 

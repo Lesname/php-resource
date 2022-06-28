@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResource\Service;
+namespace LessResource\Repository;
 
 use LessResource\Model\ResourceModel;
-use LessResource\Service\Exception\NoResource;
+use LessResource\Repository\Exception\NoResource;
 use LessResource\Set\ResourceSet;
 use LessValueObject\Composite\Paginate;
 use LessValueObject\String\Format\Resource\Identifier;
@@ -12,7 +12,7 @@ use LessValueObject\String\Format\Resource\Identifier;
 /**
  * @template T of ResourceModel
  */
-interface ResourceService
+interface ResourceRepository
 {
     public function exists(Identifier $id): bool;
 

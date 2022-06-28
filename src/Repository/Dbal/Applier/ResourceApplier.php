@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResource\Service\Dbal\Applier;
+namespace LessResource\Repository\Dbal\Applier;
 
 use LessDatabase\Query\Builder\Applier\Applier;
 
