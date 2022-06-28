@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResourceTest\Service;
+namespace LessResourceTest\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use LessHydrator\Hydrator;
 use LessResource\Model\ResourceModel;
-use LessResource\Service\AbstractDbalResourceService;
-use LessResource\Service\Dbal\Applier\ResourceApplier;
-use LessResource\Service\Exception\AbstractNoResourceWithId;
+use LessResource\Repository\AbstractDbalResourceRepository;
+use LessResource\Repository\Dbal\Applier\ResourceApplier;
+use LessResource\Repository\Exception\AbstractNoResourceWithId;
 use LessValueObject\Composite\Paginate;
 use LessValueObject\Number\Int\Paginate\Page;
 use LessValueObject\Number\Int\Paginate\PerPage;
@@ -18,9 +18,9 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 /**
- * @covers \LessResource\Service\AbstractDbalResourceService
+ * @covers \LessResource\Repository\AbstractDbalResourceRepository
  */
-final class AbstractDbalResourceServiceTest extends TestCase
+final class AbstractDbalResourceRepositoryTest extends TestCase
 {
     public function testExists(): void
     {
@@ -74,7 +74,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $hydrator = $this->createMock(Hydrator::class);
 
         $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceService::class,
+            AbstractDbalResourceRepository::class,
             [$connection, $hydrator],
         );
         $mock
@@ -136,7 +136,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $hydrator = $this->createMock(Hydrator::class);
 
         $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceService::class,
+            AbstractDbalResourceRepository::class,
             [$connection, $hydrator],
         );
         $mock
@@ -211,7 +211,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->willReturn($model);
 
         $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceService::class,
+            AbstractDbalResourceRepository::class,
             [$connection, $hydrator],
         );
         $mock
@@ -272,7 +272,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $hydrator = $this->createMock(Hydrator::class);
 
         $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceService::class,
+            AbstractDbalResourceRepository::class,
             [$connection, $hydrator],
         );
         $mock
@@ -360,7 +360,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->willReturn($model);
 
         $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceService::class,
+            AbstractDbalResourceRepository::class,
             [$connection, $hydrator],
         );
         $mock
@@ -434,7 +434,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $hydrator = $this->createMock(Hydrator::class);
 
         $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceService::class,
+            AbstractDbalResourceRepository::class,
             [$connection, $hydrator],
         );
         $mock
@@ -501,7 +501,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
         $hydrator = $this->createMock(Hydrator::class);
 
         $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceService::class,
+            AbstractDbalResourceRepository::class,
             [$connection, $hydrator],
         );
         $mock
@@ -568,7 +568,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->method('hydrate');
 
         $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceService::class,
+            AbstractDbalResourceRepository::class,
             [$connection, $hydrator],
         );
         $mock
@@ -635,7 +635,7 @@ final class AbstractDbalResourceServiceTest extends TestCase
             ->method('hydrate');
 
         $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceService::class,
+            AbstractDbalResourceRepository::class,
             [$connection, $hydrator],
         );
         $mock
