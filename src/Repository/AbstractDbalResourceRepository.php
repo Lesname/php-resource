@@ -266,11 +266,11 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
 
         foreach ($array as $key => $value) {
             $keyParts = explode('.', $key);
-            $keyCount = count($keyParts);
+            $last = array_key_last($keyParts);
             $paste = &$output;
 
             foreach ($keyParts as $i => $keyPart) {
-                if ($keyCount === $i + 1) {
+                if ($i === $last) {
                     if (array_key_exists($keyPart, $paste)) {
                         throw new RuntimeException();
                     }
