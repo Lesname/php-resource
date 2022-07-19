@@ -16,6 +16,7 @@ use LessResource\Repository\Exception\NoResourceFromBuilder;
 use LessResource\Set\ArrayResourceSet;
 use LessResource\Set\ResourceSet;
 use LessValueObject\Composite\Paginate;
+use LessValueObject\Enum\OrderDirection;
 use LessValueObject\String\Format\Resource\Identifier;
 use RuntimeException;
 
@@ -84,7 +85,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
         );
     }
 
-    protected function getByLastActivityBuilder(Paginate $paginate): QueryBuilder
+    protected function getByLastActivityBuilder(Paginate $paginate, ?OrderDirection $direction = null): QueryBuilder
     {
         $builder = $this->connection->createQueryBuilder();
 
@@ -93,7 +94,8 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
 
         (new PaginateApplier($paginate))->apply($builder);
 
-        $builder->addOrderBy("`{$applier->getTableAlias()}`.`activity_last`", 'desc');
+        $direction ??= OrderDirection::Descending;
+        $builder->addOrderBy("`{$applier->getTableAlias()}`.`activity_last`", $direction->asSQL());
 
         return $builder;
     }
@@ -266,11 +268,11 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
 
         foreach ($array as $key => $value) {
             $keyParts = explode('.', $key);
-            $keyCount = count($keyParts);
+            $last = array_key_last($keyParts);
             $paste = &$output;
 
             foreach ($keyParts as $i => $keyPart) {
-                if ($keyCount === $i + 1) {
+                if ($i === $last) {
                     if (array_key_exists($keyPart, $paste)) {
                         throw new RuntimeException();
                     }
