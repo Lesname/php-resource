@@ -87,14 +87,11 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
 
     protected function getByLastActivityBuilder(Paginate $paginate, ?OrderDirection $direction = null): QueryBuilder
     {
-        $builder = $this->connection->createQueryBuilder();
-
-        $applier = $this->getResourceApplier();
-        $applier->apply($builder);
-
+        $builder = $this->createResourceBuilder();
         (new PaginateApplier($paginate))->apply($builder);
 
         $direction ??= OrderDirection::Descending;
+        $applier = $this->getResourceApplier();
         $builder->addOrderBy("`{$applier->getTableAlias()}`.`activity_last`", $direction->asSQL());
 
         return $builder;
