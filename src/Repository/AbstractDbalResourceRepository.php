@@ -7,6 +7,8 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use JsonException;
+use LessValueObject\Collection\Identifiers;
+use LessDatabase\Query\Builder\Helper\LabelHelper;
 use LessDatabase\Query\Builder\Applier\PaginateApplier;
 use LessHydrator\Hydrator;
 use LessResource\Model\ResourceModel;
@@ -72,6 +74,37 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
             $class = $this->getNoResourceWithIdClass();
             throw new $class($id);
         }
+    }
+
+    /**
+     * @throws Exception
+     * @throws JsonException
+     */
+    public function getWithIds(Identifiers $ids): ResourceSet
+    {
+        $builder = $this->createResourceBuilder();
+        $whereInList = [];
+        $orderByList = [];
+
+        $position = 0;
+
+        foreach ($ids as $id) {
+            $label = LabelHelper::fromValue($id);
+            $builder->setParameter($label, $id->getValue());
+
+            $orderByList[] = "when :{$label} then {$position}";
+            $whereInList[] = ":{$label}";
+
+            $position += 1;
+        }
+
+        $whereInSqlList = implode(', ', $whereInList);
+        $builder->andWhere("{$this->getIdColumn()} IN {$whereInSqlList}");
+
+        $orderBySqlList = implode(' ', $orderByList);
+        $builder->addOrderBy("case {$this->getIdColumn()} {$orderBySqlList} end", 'ASC');
+
+        return $this->getResourceSetFromBuilder($builder);
     }
 
     /**
@@ -148,7 +181,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
     protected function getResourcesFromBuilder(QueryBuilder $builder): array
     {
         return array_map(
-            fn (array $associative) => $this->hydrateResource($associative),
+            fn(array $associative) => $this->hydrateResource($associative),
             $builder->fetchAllAssociative(),
         );
     }
@@ -237,7 +270,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
     {
         foreach ($this->getJsonFields() as $field) {
             if (isset($array[$field]) && is_string($array[$field])) {
-                $array[$field] = json_decode($array[$field],  true, flags: JSON_THROW_ON_ERROR);
+                $array[$field] = json_decode($array[$field], true, flags: JSON_THROW_ON_ERROR);
             }
         }
 
