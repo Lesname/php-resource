@@ -12,6 +12,10 @@
   image: php:8.1
   extends: .base
 
+.php82:
+  image: php:8.2
+  extends: .base
+
 stages:
   - quality
   - deploy
