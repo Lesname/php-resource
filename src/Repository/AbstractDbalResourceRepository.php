@@ -99,7 +99,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
         }
 
         $whereInSqlList = implode(', ', $whereInList);
-        $builder->andWhere("{$this->getIdColumn()} IN {$whereInSqlList}");
+        $builder->andWhere("{$this->getIdColumn()} IN ({$whereInSqlList})");
 
         $orderBySqlList = implode(' ', $orderByList);
         $builder->addOrderBy("case {$this->getIdColumn()} {$orderBySqlList} end", 'ASC');
