@@ -290,6 +290,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
      *
      * @return array<string, mixed>
      *
+     * @psalm-suppress MixedReturnTypeCoercion
      * @psalm-suppress MixedAssignment
      */
     protected function unflatten(array $array): array
