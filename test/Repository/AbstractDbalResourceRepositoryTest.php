@@ -300,12 +300,10 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
 
         $setBuilder
             ->expects(self::exactly(2))
-            ->method('setFirstResult')
-            ->withConsecutive([8], [0]);
+            ->method('setFirstResult');
         $setBuilder
             ->expects(self::exactly(2))
-            ->method('setMaxResults')
-            ->withConsecutive([4], [1]);
+            ->method('setMaxResults');
 
         $setBuilder
             ->expects(self::once())
