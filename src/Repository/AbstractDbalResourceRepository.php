@@ -201,6 +201,8 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
     }
 
     /**
+     * @return int<0, max>
+     *
      * @throws Exception
      */
     protected function getCountFromResultsBuilder(QueryBuilder $builder): int
@@ -208,20 +210,30 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
         $countBuilder = clone $builder;
 
         $countBuilder->select("count(distinct {$this->getIdColumn()})");
-
-        $countBuilder->resetQueryPart('orderBy');
-        $countBuilder->resetQueryPart('distinct');
-        $countBuilder->resetQueryPart('groupBy');
-        $countBuilder->resetQueryPart('having');
+        $countBuilder->resetOrderBy();
+        $countBuilder->resetGroupBy();
+        $countBuilder->resetHaving();
+        $countBuilder->distinct(false);
 
         // Resets limit/offset
         $countBuilder->setMaxResults(1);
         $countBuilder->setFirstResult(0);
 
         $result = $countBuilder->fetchOne();
-        assert(is_string($result) || is_int($result));
 
-        return (int)$result;
+        if (is_string($result) && ctype_digit($result)) {
+            $result = (int) $result;
+        }
+
+        if (!is_int($result)) {
+            throw new RuntimeException();
+        }
+
+        if ($result < 0) {
+            throw new RuntimeException();
+        }
+
+        return $result;
     }
 
     protected function createResourceBuilder(): QueryBuilder
