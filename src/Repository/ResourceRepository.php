@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LessResource\Repository;
 
 use LessResource\Model\ResourceModel;
+use LessValueObject\Collection\Identifiers;
 use LessResource\Repository\Exception\NoResource;
 use LessResource\Set\ResourceSet;
 use LessValueObject\Composite\Paginate;
@@ -22,6 +23,11 @@ interface ResourceRepository
      * @throws NoResource
      */
     public function getWithId(Identifier $id): ResourceModel;
+
+    /**
+     * @return ResourceSet<T>
+     */
+    public function getWithIds(Identifiers $ids): ResourceSet;
 
     /**
      * @return ResourceSet<T>
