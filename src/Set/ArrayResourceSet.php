@@ -17,7 +17,7 @@ final class ArrayResourceSet implements IteratorAggregate, ResourceSet
 {
     /**
      * @param array<int, T> $resources
-     * @param int $count
+     * @param int<0, max> $count
      */
     public function __construct(private array $resources, private int $count)
     { }

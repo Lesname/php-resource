@@ -17,7 +17,7 @@ final class CollectionValueObjectResourceSet implements IteratorAggregate, Resou
 {
     /**
      * @param CollectionValueObject<T> $collection
-     * @param int $count
+     * @param int<0, max> $count
      */
     public function __construct(private CollectionValueObject $collection, private int $count)
     {}
