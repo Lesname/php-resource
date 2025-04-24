@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResource\Set;
+namespace LesResource\Set;
 
 use Countable;
 use JsonSerializable;
@@ -10,7 +10,7 @@ use Traversable;
 /**
  * @extends Traversable<int, T>
  *
- * @template T of \LessResource\Model\ResourceModel
+ * @template T of \LesResource\Model\ResourceModel
  */
 interface ResourceSet extends Traversable, JsonSerializable, Countable
 {

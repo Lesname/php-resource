@@ -1,24 +1,24 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResourceTest\Repository;
+namespace LesResourceTest\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
-use LessHydrator\Hydrator;
-use LessResource\Model\ResourceModel;
-use LessResource\Repository\AbstractDbalResourceRepository;
-use LessResource\Repository\Dbal\Applier\ResourceApplier;
-use LessResource\Repository\Exception\AbstractNoResourceWithId;
-use LessValueObject\Composite\Paginate;
-use LessValueObject\Number\Int\Paginate\Page;
-use LessValueObject\Number\Int\Paginate\PerPage;
-use LessValueObject\String\Format\Resource\Identifier;
+use LesHydrator\Hydrator;
+use LesResource\Model\ResourceModel;
+use LesResource\Repository\AbstractDbalResourceRepository;
+use LesResource\Repository\Dbal\Applier\ResourceApplier;
+use LesResource\Repository\Exception\AbstractNoResourceWithId;
+use LesValueObject\Composite\Paginate;
+use LesValueObject\Number\Int\Paginate\Page;
+use LesValueObject\Number\Int\Paginate\PerPage;
+use LesValueObject\String\Format\Resource\Identifier;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 /**
- * @covers \LessResource\Repository\AbstractDbalResourceRepository
+ * @covers \LesResource\Repository\AbstractDbalResourceRepository
  */
 final class AbstractDbalResourceRepositoryTest extends TestCase
 {
@@ -73,13 +73,27 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
 
         $hydrator = $this->createMock(Hydrator::class);
 
-        $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceRepository::class,
-            [$connection, $hydrator],
-        );
-        $mock
-            ->method('getResourceApplier')
-            ->willReturn($applier);
+        $mock = new class ($connection, $hydrator, $applier) extends AbstractDbalResourceRepository {
+            public function __construct(Connection $connection, Hydrator $hydrator, private readonly ResourceApplier $applier)
+            {
+                parent::__construct($connection, $hydrator);
+            }
+
+            protected function getResourceApplier(): ResourceApplier
+            {
+                return $this->applier;
+            }
+
+            protected function getResourceModelClass(): string
+            {
+                throw new RuntimeException();
+            }
+
+            protected function getNoResourceWithIdClass(): string
+            {
+                throw new RuntimeException();
+            }
+        };
 
         self::assertTrue($mock->exists($id));
     }
@@ -135,13 +149,27 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
 
         $hydrator = $this->createMock(Hydrator::class);
 
-        $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceRepository::class,
-            [$connection, $hydrator],
-        );
-        $mock
-            ->method('getResourceApplier')
-            ->willReturn($applier);
+        $mock = new class ($connection, $hydrator, $applier) extends AbstractDbalResourceRepository {
+            public function __construct(Connection $connection, Hydrator $hydrator, private readonly ResourceApplier $applier)
+            {
+                parent::__construct($connection, $hydrator);
+            }
+
+            protected function getResourceApplier(): ResourceApplier
+            {
+                return $this->applier;
+            }
+
+            protected function getResourceModelClass(): string
+            {
+                throw new RuntimeException();
+            }
+
+            protected function getNoResourceWithIdClass(): string
+            {
+                throw new RuntimeException();
+            }
+        };
 
         self::assertFalse($mock->exists($id));
     }
@@ -210,18 +238,27 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
             )
             ->willReturn($model);
 
-        $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceRepository::class,
-            [$connection, $hydrator],
-        );
-        $mock
-            ->method('getResourceApplier')
-            ->willReturn($applier);
+        $mock = new class ($connection, $hydrator, $applier) extends AbstractDbalResourceRepository {
+            public function __construct(Connection $connection, Hydrator $hydrator, private readonly ResourceApplier $applier)
+            {
+                parent::__construct($connection, $hydrator);
+            }
 
-        $mock
-            ->expects(self::once())
-            ->method('getResourceModelClass')
-            ->willReturn(ResourceModel::class);
+            protected function getResourceApplier(): ResourceApplier
+            {
+                return $this->applier;
+            }
+
+            protected function getResourceModelClass(): string
+            {
+                return ResourceModel::class;
+            }
+
+            protected function getNoResourceWithIdClass(): string
+            {
+                throw new RuntimeException();
+            }
+        };
 
         self::assertSame($model, $mock->getWithId($id));
     }
@@ -271,18 +308,31 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
 
         $hydrator = $this->createMock(Hydrator::class);
 
-        $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceRepository::class,
-            [$connection, $hydrator],
-        );
-        $mock
-            ->method('getResourceApplier')
-            ->willReturn($applier);
+        $mock = new class ($connection, $hydrator, $applier, $e::class) extends AbstractDbalResourceRepository {
+            public function __construct(
+                Connection $connection,
+                Hydrator $hydrator,
+                private readonly ResourceApplier $applier,
+                private readonly string $noResourceWithId,
+            ) {
+                parent::__construct($connection, $hydrator);
+            }
 
-        $mock
-            ->expects(self::once())
-            ->method('getNoResourceWithIdClass')
-            ->willReturn($e::class);
+            protected function getResourceApplier(): ResourceApplier
+            {
+                return $this->applier;
+            }
+
+            protected function getResourceModelClass(): string
+            {
+                throw new RuntimeException();
+            }
+
+            protected function getNoResourceWithIdClass(): string
+            {
+                return $this->noResourceWithId;
+            }
+        };
 
         $mock->getWithId($id);
     }
@@ -357,18 +407,27 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
             )
             ->willReturn($model);
 
-        $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceRepository::class,
-            [$connection, $hydrator],
-        );
-        $mock
-            ->method('getResourceApplier')
-            ->willReturn($applier);
+        $mock = new class ($connection, $hydrator, $applier) extends AbstractDbalResourceRepository {
+            public function __construct(Connection $connection, Hydrator $hydrator, private readonly ResourceApplier $applier)
+            {
+                parent::__construct($connection, $hydrator);
+            }
 
-        $mock
-            ->expects(self::once())
-            ->method('getResourceModelClass')
-            ->willReturn(ResourceModel::class);
+            protected function getResourceApplier(): ResourceApplier
+            {
+                return $this->applier;
+            }
+
+            protected function getResourceModelClass(): string
+            {
+                return ResourceModel::class;
+            }
+
+            protected function getNoResourceWithIdClass(): string
+            {
+                throw new RuntimeException();
+            }
+        };
 
         $paginate = new Paginate(new PerPage(4), new Page(3));
         $set = $mock->getByLastActivity($paginate);
@@ -431,13 +490,27 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
 
         $hydrator = $this->createMock(Hydrator::class);
 
-        $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceRepository::class,
-            [$connection, $hydrator],
-        );
-        $mock
-            ->method('getResourceApplier')
-            ->willReturn($applier);
+        $mock = new class ($connection, $hydrator, $applier) extends AbstractDbalResourceRepository {
+            public function __construct(Connection $connection, Hydrator $hydrator, private readonly ResourceApplier $applier)
+            {
+                parent::__construct($connection, $hydrator);
+            }
+
+            protected function getResourceApplier(): ResourceApplier
+            {
+                return $this->applier;
+            }
+
+            protected function getResourceModelClass(): string
+            {
+                throw new RuntimeException();
+            }
+
+            protected function getNoResourceWithIdClass(): string
+            {
+                throw new RuntimeException();
+            }
+        };
 
         self::assertSame(2, $mock->getCurrentVersion($id));
     }
@@ -498,18 +571,31 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
 
         $hydrator = $this->createMock(Hydrator::class);
 
-        $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceRepository::class,
-            [$connection, $hydrator],
-        );
-        $mock
-            ->method('getResourceApplier')
-            ->willReturn($applier);
+        $mock = new class ($connection, $hydrator, $applier, $e::class) extends AbstractDbalResourceRepository {
+            public function __construct(
+                Connection $connection,
+                Hydrator $hydrator,
+                private readonly ResourceApplier $applier,
+                private readonly string $noResourceWithId,
+            ) {
+                parent::__construct($connection, $hydrator);
+            }
 
-        $mock
-            ->expects(self::once())
-            ->method('getNoResourceWithIdClass')
-            ->willReturn($e::class);
+            protected function getResourceApplier(): ResourceApplier
+            {
+                return $this->applier;
+            }
+
+            protected function getResourceModelClass(): string
+            {
+                throw new RuntimeException();
+            }
+
+            protected function getNoResourceWithIdClass(): string
+            {
+                return $this->noResourceWithId;
+            }
+        };
 
         $mock->getCurrentVersion($id);
     }
@@ -565,18 +651,27 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
             ->expects(self::never())
             ->method('hydrate');
 
-        $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceRepository::class,
-            [$connection, $hydrator],
-        );
-        $mock
-            ->method('getResourceApplier')
-            ->willReturn($applier);
+        $mock = new class ($connection, $hydrator, $applier) extends AbstractDbalResourceRepository {
+            public function __construct(Connection $connection, Hydrator $hydrator, private readonly ResourceApplier $applier)
+            {
+                parent::__construct($connection, $hydrator);
+            }
 
-        $mock
-            ->expects(self::once())
-            ->method('getResourceModelClass')
-            ->willReturn(ResourceModel::class);
+            protected function getResourceApplier(): ResourceApplier
+            {
+                return $this->applier;
+            }
+
+            protected function getResourceModelClass(): string
+            {
+                return ResourceModel::class;
+            }
+
+            protected function getNoResourceWithIdClass(): string
+            {
+                throw new RuntimeException();
+            }
+        };
 
         $mock->getWithId($id);
     }
@@ -632,18 +727,29 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
             ->expects(self::never())
             ->method('hydrate');
 
-        $mock = $this->getMockForAbstractClass(
-            AbstractDbalResourceRepository::class,
-            [$connection, $hydrator],
-        );
-        $mock
-            ->method('getResourceApplier')
-            ->willReturn($applier);
+        $mock = new class ($connection, $hydrator, $applier) extends AbstractDbalResourceRepository {
+            public function __construct(
+                Connection $connection,
+                Hydrator $hydrator,
+                private readonly ResourceApplier $applier,
+            ) {
+                parent::__construct($connection, $hydrator);
+            }
 
-        $mock
-            ->expects(self::once())
-            ->method('getResourceModelClass')
-            ->willReturn(ResourceModel::class);
+            protected function getResourceApplier(): ResourceApplier
+            {
+                return $this->applier;
+            }
+
+            protected function getResourceModelClass(): string
+            {
+                return ResourceModel::class;
+            }
+
+            protected function getNoResourceWithIdClass(): string
+            {
+            }
+        };
 
         $mock->getWithId($id);
     }

@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResource\Model;
+namespace LesResource\Model;
 
-use LessValueObject\Composite\CompositeValueObject;
+use LesValueObject\Composite\CompositeValueObject;
 
 /**
  * @psalm-immutable

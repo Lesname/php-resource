@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResource\Repository;
+namespace LesResource\Repository;
 
-use LessResource\Model\ResourceModel;
-use LessValueObject\Collection\Identifiers;
-use LessResource\Repository\Exception\NoResource;
-use LessResource\Set\ResourceSet;
-use LessValueObject\Composite\Paginate;
-use LessValueObject\String\Format\Resource\Identifier;
+use LesResource\Model\ResourceModel;
+use LesValueObject\Collection\Identifiers;
+use LesResource\Repository\Exception\NoResource;
+use LesResource\Set\ResourceSet;
+use LesValueObject\Composite\Paginate;
+use LesValueObject\String\Format\Resource\Identifier;
 
 /**
  * @template T of ResourceModel

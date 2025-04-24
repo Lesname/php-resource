@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResource\Set;
+namespace LesResource\Set;
 
+use Override;
 use ArrayIterator;
 use IteratorAggregate;
 use Traversable;
@@ -11,7 +12,7 @@ use Traversable;
  * @implements IteratorAggregate<int, T>
  * @implements ResourceSet<T>
  *
- * @template T of \LessResource\Model\ResourceModel
+ * @template T of \LesResource\Model\ResourceModel
  */
 final class ArrayResourceSet implements IteratorAggregate, ResourceSet
 {
@@ -20,11 +21,12 @@ final class ArrayResourceSet implements IteratorAggregate, ResourceSet
      * @param int<0, max> $count
      */
     public function __construct(private array $resources, private int $count)
-    { }
+    {}
 
     /**
      * @return Traversable<int, T>
      */
+    #[Override]
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->resources);
@@ -33,11 +35,13 @@ final class ArrayResourceSet implements IteratorAggregate, ResourceSet
     /**
      * @return array<int, T>
      */
+    #[Override]
     public function jsonSerialize(): array
     {
         return $this->resources;
     }
 
+    #[Override]
     public function count(): int
     {
         return $this->count;

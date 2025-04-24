@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResourceTest\Repository\Exception;
+namespace LesResourceTest\Repository\Exception;
 
-use LessResource\Repository\Exception\AbstractNoResourceWithId;
-use LessValueObject\String\Format\Resource\Identifier;
+use LesResource\Repository\Exception\AbstractNoResourceWithId;
+use LesValueObject\String\Format\Resource\Identifier;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \LessResource\Repository\Exception\AbstractNoResourceWithId
+ * @covers \LesResource\Repository\Exception\AbstractNoResourceWithId
  */
 final class AbstractNoResourceWithIdTest extends TestCase
 {
