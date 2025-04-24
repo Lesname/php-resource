@@ -1,31 +1,32 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResource\Repository;
+namespace LesResource\Repository;
 
+use Override;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use JsonException;
-use LessValueObject\Collection\Identifiers;
-use LessDatabase\Query\Builder\Helper\LabelHelper;
-use LessDatabase\Query\Builder\Applier\PaginateApplier;
-use LessHydrator\Hydrator;
-use LessResource\Model\ResourceModel;
-use LessResource\Repository\Dbal\Applier\ResourceApplier;
-use LessResource\Repository\Exception\AbstractNoResourceWithId;
-use LessResource\Repository\Exception\NoResourceFromBuilder;
-use LessResource\Set\ArrayResourceSet;
-use LessResource\Set\ResourceSet;
-use LessValueObject\Composite\Paginate;
-use LessValueObject\Enum\OrderDirection;
-use LessValueObject\String\Format\Resource\Identifier;
+use LesValueObject\Collection\Identifiers;
+use LesDatabase\Query\Builder\Helper\LabelHelper;
+use LesDatabase\Query\Builder\Applier\PaginateApplier;
+use LesHydrator\Hydrator;
+use LesResource\Model\ResourceModel;
+use LesResource\Repository\Dbal\Applier\ResourceApplier;
+use LesResource\Repository\Exception\AbstractNoResourceWithId;
+use LesResource\Repository\Exception\NoResourceFromBuilder;
+use LesResource\Set\ArrayResourceSet;
+use LesResource\Set\ResourceSet;
+use LesValueObject\Composite\Paginate;
+use LesValueObject\Enum\OrderDirection;
+use LesValueObject\String\Format\Resource\Identifier;
 use RuntimeException;
 
 /**
  * @implements ResourceRepository<T>
  *
- * @template T of \LessResource\Model\ResourceModel
+ * @template T of \LesResource\Model\ResourceModel
  */
 abstract class AbstractDbalResourceRepository implements ResourceRepository
 {
@@ -49,6 +50,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
     /**
      * @throws Exception
      */
+    #[Override]
     public function exists(Identifier $id): bool
     {
         $builder = $this->createBaseBuilder();
@@ -59,10 +61,10 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
     }
 
     /**
-     * @throws AbstractNoResourceWithId
      * @throws Exception
      * @throws JsonException
      */
+    #[Override]
     public function getWithId(Identifier $id): ResourceModel
     {
         $builder = $this->createResourceBuilder();
@@ -80,6 +82,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
      * @throws Exception
      * @throws JsonException
      */
+    #[Override]
     public function getWithIds(Identifiers $ids): ResourceSet
     {
         $builder = $this->createResourceBuilder();
@@ -90,7 +93,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
 
         foreach ($ids as $id) {
             $label = LabelHelper::fromValue($id);
-            $builder->setParameter($label, $id->getValue());
+            $builder->setParameter($label, $id->value);
 
             $orderByList[] = "when :{$label} then {$position}";
             $whereInList[] = ":{$label}";
@@ -111,6 +114,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
      * @throws Exception
      * @throws JsonException
      */
+    #[Override]
     public function getByLastActivity(Paginate $paginate): ResourceSet
     {
         return $this->getResourceSetFromBuilder(
@@ -131,9 +135,9 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
     }
 
     /**
-     * @throws AbstractNoResourceWithId
      * @throws Exception
      */
+    #[Override]
     public function getCurrentVersion(Identifier $id): int
     {
         $builder = $this->connection->createQueryBuilder();

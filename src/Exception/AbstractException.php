@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResource\Exception;
+namespace LesResource\Exception;
 
 use Exception;
 

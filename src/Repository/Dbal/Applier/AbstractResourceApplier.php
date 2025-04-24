@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResource\Repository\Dbal\Applier;
+namespace LesResource\Repository\Dbal\Applier;
 
+use Override;
 use Doctrine\DBAL\Query\QueryBuilder;
-use LessDatabase\Query\Builder\Applier\SelectApplier;
+use LesDatabase\Query\Builder\Applier\SelectApplier;
 
 abstract class AbstractResourceApplier implements ResourceApplier
 {
@@ -16,6 +17,7 @@ abstract class AbstractResourceApplier implements ResourceApplier
     /**
      * @psalm-suppress MixedArgumentTypeCoercion flatten ...
      */
+    #[Override]
     public function apply(QueryBuilder $builder): QueryBuilder
     {
         $builder->from("`{$this->getTableName()}`", "`{$this->getTableAlias()}`");

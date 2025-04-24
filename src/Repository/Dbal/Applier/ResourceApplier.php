@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResource\Repository\Dbal\Applier;
+namespace LesResource\Repository\Dbal\Applier;
 
-use LessDatabase\Query\Builder\Applier\Applier;
+use LesDatabase\Query\Builder\Applier\Applier;
 
 interface ResourceApplier extends Applier
 {

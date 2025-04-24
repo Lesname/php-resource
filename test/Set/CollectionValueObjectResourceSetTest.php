@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResourceTest\Set;
+namespace LesResourceTest\Set;
 
-use LessResource\Model\ResourceModel;
-use LessResource\Set\CollectionValueObjectResourceSet;
+use LesResource\Model\ResourceModel;
+use LesResource\Set\CollectionValueObjectResourceSet;
 use PHPUnit\Framework\TestCase;
-use LessValueObject\Collection\AbstractCollectionValueObject;
+use LesValueObject\Collection\AbstractCollectionValueObject;
 
 /**
- * @covers \LessResource\Set\CollectionValueObjectResourceSet
+ * @covers \LesResource\Set\CollectionValueObjectResourceSet
  */
 class CollectionValueObjectResourceSetTest extends TestCase
 {

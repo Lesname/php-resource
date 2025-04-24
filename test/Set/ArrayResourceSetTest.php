@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace LessResourceTest\Set;
+namespace LesResourceTest\Set;
 
-use LessResource\Model\ResourceModel;
-use LessResource\Set\ArrayResourceSet;
+use LesResource\Model\ResourceModel;
+use LesResource\Set\ArrayResourceSet;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \LessResource\Set\ArrayResourceSet
+ * @covers \LesResource\Set\ArrayResourceSet
  */
 final class ArrayResourceSetTest extends TestCase
 {
