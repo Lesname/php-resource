@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace LesResource\Repository;
 
 use LesResource\Model\ResourceModel;
-use LesValueObject\Collection\Identifiers;
 use LesResource\Repository\Exception\NoResource;
 use LesResource\Set\ResourceSet;
 use LesValueObject\Composite\Paginate;
+use LesResource\Repository\Parameters\Identifiers;
 use LesValueObject\String\Format\Resource\Identifier;
 
 /**
