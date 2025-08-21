@@ -211,19 +211,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
      */
     protected function getCountFromResultsBuilder(QueryBuilder $builder): int
     {
-        $countBuilder = clone $builder;
-
-        $countBuilder->select("count(distinct {$this->getIdColumn()})");
-        $countBuilder->resetOrderBy();
-        $countBuilder->resetGroupBy();
-        $countBuilder->resetHaving();
-        $countBuilder->distinct(false);
-
-        // Resets limit/offset
-        $countBuilder->setMaxResults(1);
-        $countBuilder->setFirstResult(0);
-
-        $result = $countBuilder->fetchOne();
+        $result = $this->buildCountBuilder($builder)->fetchOne();
 
         if (is_string($result) && ctype_digit($result)) {
             $result = (int) $result;
@@ -238,6 +226,23 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
         }
 
         return $result;
+    }
+
+    protected function buildCountBuilder(QueryBuilder $builder): QueryBuilder
+    {
+        $countBuilder = clone $builder;
+
+        $countBuilder->select("count(*)");
+        $countBuilder->resetOrderBy();
+        $countBuilder->resetGroupBy();
+        $countBuilder->resetHaving();
+        $countBuilder->distinct(false);
+
+        // Resets limit/offset
+        $countBuilder->setMaxResults(1);
+        $countBuilder->setFirstResult(0);
+
+        return $countBuilder;
     }
 
     protected function createResourceBuilder(): QueryBuilder
@@ -349,7 +354,8 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
     protected function getIdColumn(): string
     {
         $applier = $this->getResourceApplier();
+        $alias = trim($applier->getTableAlias(), '`');
 
-        return "`{$applier->getTableAlias()}`.id";
+        return "`{$alias}`.id";
     }
 }
