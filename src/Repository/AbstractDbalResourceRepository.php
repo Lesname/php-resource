@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace LesResource\Repository;
@@ -92,8 +93,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
         $position = 0;
 
         foreach ($ids as $id) {
-            $label = LabelHelper::fromValue($id);
-            $builder->setParameter($label, $id->value);
+            $label = $builder->createNamedParameter($id->value);
 
             $orderByList[] = "when :{$label} then {$position}";
             $whereInList[] = ":{$label}";
