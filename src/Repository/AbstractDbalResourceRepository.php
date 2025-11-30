@@ -95,8 +95,8 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
         foreach ($ids as $id) {
             $label = $builder->createNamedParameter($id->value);
 
-            $orderByList[] = "when :{$label} then {$position}";
-            $whereInList[] = ":{$label}";
+            $orderByList[] = "when {$label} then {$position}";
+            $whereInList[] = $label;
 
             $position += 1;
         }
