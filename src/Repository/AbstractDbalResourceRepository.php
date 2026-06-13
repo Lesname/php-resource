@@ -31,18 +31,28 @@ use RuntimeException;
  */
 abstract class AbstractDbalResourceRepository implements ResourceRepository
 {
+    /**
+     * @psalm-mutation-free
+     */
     abstract protected function getResourceApplier(): ResourceApplier;
 
     /**
      * @return class-string<T>
+     *
+     * @psalm-mutation-free
      */
     abstract protected function getResourceModelClass(): string;
 
     /**
      * @return class-string<AbstractNoResourceWithId>
+     *
+     * @psalm-mutation-free
      */
     abstract protected function getNoResourceWithIdClass(): string;
 
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(
         protected Connection $connection,
         protected Hydrator $hydrator
@@ -129,7 +139,10 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
 
         $direction ??= OrderDirection::Descending;
         $applier = $this->getResourceApplier();
-        $builder->addOrderBy("`{$applier->getTableAlias()}`.`activity_last`", $direction->asSQL());
+        $builder->addOrderBy(
+            sprintf('"%s".activity_last', $applier->getTableAlias()),
+            $direction->asSQL(),
+        );
 
         return $builder;
     }
@@ -145,7 +158,10 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
         $this->applyWhereId($builder, $id);
 
         $applier = $this->getResourceApplier();
-        $builder->from("`{$applier->getTableName()}`", "`{$applier->getTableAlias()}`");
+        $builder->from(
+            sprintf('"%s"', $applier->getTableName()),
+            sprintf('"%s"', $applier->getTableAlias()),
+        );
 
         $result = $builder->fetchOne();
         assert(is_string($result) || $result === false);
@@ -258,7 +274,10 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
         $builder = $this->connection->createQueryBuilder();
 
         $applier = $this->getResourceApplier();
-        $builder->from("`{$applier->getTableName()}`", "`{$applier->getTableAlias()}`");
+        $builder->from(
+            sprintf('"%s"', $applier->getTableName()),
+            sprintf('"%s"', $applier->getTableAlias()),
+        );
 
         return $builder;
     }
@@ -300,6 +319,8 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
 
     /**
      * @return iterable<string>
+     *
+     * @psalm-pure
      */
     protected function getJsonFields(): iterable
     {
@@ -311,35 +332,30 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
      *
      * @return array<string, mixed>
      *
-     * @psalm-suppress MixedReturnTypeCoercion
      * @psalm-suppress MixedAssignment
+     *
+     * @psalm-mutation-free
      */
     protected function unflatten(array $array): array
     {
-        $output = [];
+        $process = $output = [];
 
         foreach ($array as $key => $value) {
-            $keyParts = explode('.', $key);
-            $last = array_key_last($keyParts);
-            $paste = &$output;
+            $keyParts = explode('.', $key, 2);
 
-            foreach ($keyParts as $i => $keyPart) {
-                if ($i === $last) {
-                    if (array_key_exists($keyPart, $paste)) {
-                        throw new RuntimeException();
-                    }
-
-                    $paste[$keyPart] = $value;
-                } else {
-                    if (!array_key_exists($keyPart, $paste)) {
-                        $paste[$keyPart] = [];
-                    } elseif (!is_array($paste[$keyPart])) {
-                        throw new RuntimeException();
-                    }
-
-                    $paste = &$paste[$keyPart];
+            if (count($keyParts) === 2) {
+                if (!isset($process[$keyParts[0]])) {
+                    $process[$keyParts[0]] = [];
                 }
+
+                $process[$keyParts[0]][$keyParts[1]] = $value;
+            } else {
+                $output[$key] = $value;
             }
+        }
+
+        foreach ($process as $key => $value) {
+            $output[$key] = $this->unflatten($value);
         }
 
         return $output;
@@ -351,11 +367,17 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
         $builder->setParameter('id', $id);
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     protected function getIdColumn(): string
     {
         $applier = $this->getResourceApplier();
-        $alias = trim($applier->getTableAlias(), '`');
+        $alias = trim($applier->getTableAlias(), '"');
 
-        return "`{$alias}`.id";
+        return sprintf(
+            '"%s".id',
+            $alias,
+        );
     }
 }

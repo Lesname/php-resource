@@ -12,6 +12,8 @@ use Traversable;
  * @extends Traversable<int, T>
  *
  * @template T of \LesResource\Model\ResourceModel
+ *
+ * @psalm-immutable
  */
 interface ResourceSet extends Traversable, JsonSerializable, Countable
 {

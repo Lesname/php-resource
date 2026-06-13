@@ -14,6 +14,8 @@ use LesValueObject\Collection\CollectionValueObject;
  * @implements ResourceSet<T>
  *
  * @template T of \LesResource\Model\ResourceModel
+ *
+ * @psalm-immutable
  */
 final class CollectionValueObjectResourceSet implements IteratorAggregate, ResourceSet
 {
@@ -21,8 +23,10 @@ final class CollectionValueObjectResourceSet implements IteratorAggregate, Resou
      * @param CollectionValueObject<T> $collection
      * @param int<0, max> $count
      */
-    public function __construct(private CollectionValueObject $collection, private int $count)
-    {}
+    public function __construct(
+        private readonly CollectionValueObject $collection,
+        private readonly int $count,
+    ) {}
 
     /**
      * @return Traversable<int, T>

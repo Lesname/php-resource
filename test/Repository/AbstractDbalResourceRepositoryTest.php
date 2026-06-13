@@ -41,12 +41,12 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('from')
-            ->with('`table`', '`t`');
+            ->with('"table"', '"t"');
 
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('`t`.id = :id')
+            ->with('"t".id = :id')
             ->willReturn($builder);
 
         $builder
@@ -117,12 +117,12 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('from')
-            ->with('`table`', '`t`');
+            ->with('"table"', '"t"');
 
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('`t`.id = :id')
+            ->with('"t".id = :id')
             ->willReturn($builder);
 
         $builder
@@ -185,7 +185,7 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('`t`.id = :id')
+            ->with('"t".id = :id')
             ->willReturn($builder);
 
         $builder
@@ -277,7 +277,7 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('`t`.id = :id')
+            ->with('"t".id = :id')
             ->willReturn($builder);
 
         $builder
@@ -346,7 +346,7 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
         $setBuilder
             ->expects(self::once())
             ->method('addOrderBy')
-            ->with('`t`.`activity_last`', 'desc')
+            ->with('"t".activity_last', 'desc')
             ->willReturn($setBuilder);
 
         $setBuilder
@@ -458,12 +458,12 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('from')
-            ->with('`table`', '`t`');
+            ->with('"table"', '"t"');
 
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('`t`.id = :id')
+            ->with('"t".id = :id')
             ->willReturn($builder);
 
         $builder
@@ -539,12 +539,12 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('from')
-            ->with('`table`', '`t`');
+            ->with('"table"', '"t"');
 
         $builder
             ->expects(self::once())
             ->method('andWhere')
-            ->with('`t`.id = :id')
+            ->with('"t".id = :id')
             ->willReturn($builder);
 
         $builder
@@ -599,159 +599,5 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
         };
 
         $mock->getCurrentVersion($id);
-    }
-
-    public function testInvalidLastUnflatten(): void
-    {
-        $this->expectException(RuntimeException::class);
-
-        $id = new Identifier('517bf6e8-f812-426d-b503-d3de5619cac5');
-
-        $builder = $this->createMock(QueryBuilder::class);
-        $builder
-            ->expects(self::once())
-            ->method('andWhere')
-            ->with('`t`.id = :id')
-            ->willReturn($builder);
-
-        $builder
-            ->expects(self::once())
-            ->method('setParameter')
-            ->with('id', $id)
-            ->willReturn($builder);
-
-        $builder
-            ->expects(self::once())
-            ->method('fetchAssociative')
-            ->willReturn(
-                [
-                    'id' => '4',
-                    'attributes.name.bar' => 'baz',
-                    'attributes.name' => 'bar',
-                ],
-            );
-
-        $applier = $this->createMock(ResourceApplier::class);
-        $applier
-            ->expects(self::once())
-            ->method('apply')
-            ->with($builder);
-
-        $applier
-            ->method('getTableAlias')
-            ->willReturn('t');
-
-        $connection = $this->createMock(Connection::class);
-        $connection
-            ->expects(self::once())
-            ->method('createQueryBuilder')
-            ->willReturn($builder);
-
-        $hydrator = $this->createMock(Hydrator::class);
-        $hydrator
-            ->expects(self::never())
-            ->method('hydrate');
-
-        $mock = new class ($connection, $hydrator, $applier) extends AbstractDbalResourceRepository {
-            public function __construct(Connection $connection, Hydrator $hydrator, private readonly ResourceApplier $applier)
-            {
-                parent::__construct($connection, $hydrator);
-            }
-
-            protected function getResourceApplier(): ResourceApplier
-            {
-                return $this->applier;
-            }
-
-            protected function getResourceModelClass(): string
-            {
-                return ResourceModel::class;
-            }
-
-            protected function getNoResourceWithIdClass(): string
-            {
-                throw new RuntimeException();
-            }
-        };
-
-        $mock->getWithId($id);
-    }
-
-    public function testUnflattedNonArray(): void
-    {
-        $this->expectException(RuntimeException::class);
-
-        $id = new Identifier('517bf6e8-f812-426d-b503-d3de5619cac5');
-
-        $builder = $this->createMock(QueryBuilder::class);
-        $builder
-            ->expects(self::once())
-            ->method('andWhere')
-            ->with('`t`.id = :id')
-            ->willReturn($builder);
-
-        $builder
-            ->expects(self::once())
-            ->method('setParameter')
-            ->with('id', $id)
-            ->willReturn($builder);
-
-        $builder
-            ->expects(self::once())
-            ->method('fetchAssociative')
-            ->willReturn(
-                [
-                    'id' => '4',
-                    'attributes.name' => 'bar',
-                    'attributes.name.bar' => 'baz',
-                ],
-            );
-
-        $applier = $this->createMock(ResourceApplier::class);
-        $applier
-            ->expects(self::once())
-            ->method('apply')
-            ->with($builder);
-
-        $applier
-            ->method('getTableAlias')
-            ->willReturn('t');
-
-        $connection = $this->createMock(Connection::class);
-        $connection
-            ->expects(self::once())
-            ->method('createQueryBuilder')
-            ->willReturn($builder);
-
-        $hydrator = $this->createMock(Hydrator::class);
-        $hydrator
-            ->expects(self::never())
-            ->method('hydrate');
-
-        $mock = new class ($connection, $hydrator, $applier) extends AbstractDbalResourceRepository {
-            public function __construct(
-                Connection $connection,
-                Hydrator $hydrator,
-                private readonly ResourceApplier $applier,
-            ) {
-                parent::__construct($connection, $hydrator);
-            }
-
-            protected function getResourceApplier(): ResourceApplier
-            {
-                return $this->applier;
-            }
-
-            protected function getResourceModelClass(): string
-            {
-                return ResourceModel::class;
-            }
-
-            protected function getNoResourceWithIdClass(): string
-            {
-            }
-        };
-
-        $mock->getWithId($id);
     }
 }

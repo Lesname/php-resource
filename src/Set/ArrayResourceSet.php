@@ -14,15 +14,21 @@ use Traversable;
  * @implements ResourceSet<T>
  *
  * @template T of \LesResource\Model\ResourceModel
+ *
+ * @psalm-suppress ImmutableDependency
  */
 final class ArrayResourceSet implements IteratorAggregate, ResourceSet
 {
     /**
      * @param array<int, T> $resources
      * @param int<0, max> $count
+     *
+     * @psalm-mutation-free
      */
-    public function __construct(private array $resources, private int $count)
-    {}
+    public function __construct(
+        private readonly array $resources,
+        private readonly int $count,
+    ) {}
 
     /**
      * @return Traversable<int, T>
