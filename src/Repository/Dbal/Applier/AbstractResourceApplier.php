@@ -12,6 +12,8 @@ abstract class AbstractResourceApplier implements ResourceApplier
 {
     /**
      * @return array<string, string|array<string, string|array<string, string|array<string, string|array<string, string|array<string, string|array<string, string|array<string, string>>>>>>>>
+     *
+     * @psalm-mutation-free
      */
     abstract protected function getFields(): array;
 
@@ -21,7 +23,10 @@ abstract class AbstractResourceApplier implements ResourceApplier
     #[Override]
     public function apply(QueryBuilder $builder): QueryBuilder
     {
-        $builder->from("`{$this->getTableName()}`", "`{$this->getTableAlias()}`");
+        $builder->from(
+            sprintf('"%s"', $this->getTableName()),
+            sprintf('"%s"', $this->getTableAlias()),
+        );
 
         $applier = SelectApplier::fromNested($this->getFields());
         $applier->apply($builder);
