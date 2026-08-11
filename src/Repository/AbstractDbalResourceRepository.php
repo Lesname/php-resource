@@ -214,10 +214,15 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
      */
     protected function getResourceSetFromBuilder(QueryBuilder $builder): ResourceSet
     {
-        return new ArrayResourceSet(
-            $this->getResourcesFromBuilder($builder),
-            $this->getCountFromResultsBuilder($builder),
-        );
+        $resources = $this->getResourcesFromBuilder($builder);
+        $maxResults = $builder->getMaxResults();
+
+        // When the amount of resources is less than the max results, we don't need to query the count
+        $count = !is_int($maxResults) || $maxResults <= count($resources)
+            ? $this->getCountFromResultsBuilder($builder)
+            : count($resources);
+
+        return new ArrayResourceSet($resources, $count);
     }
 
     /**

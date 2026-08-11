@@ -48,8 +48,8 @@ final class AbstractResourceApplierTest extends TestCase
             ->expects(self::once())
             ->method('addSelect')
             ->with(
-                "t.id as 'id'",
-                "t.name as 'attributes.name'",
+                't.id as "id"',
+                't.name as "attributes.name"',
             )
             ->willReturn($builder);
 
