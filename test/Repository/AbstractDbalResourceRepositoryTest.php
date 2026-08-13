@@ -358,6 +358,16 @@ final class AbstractDbalResourceRepositoryTest extends TestCase
 
         $setBuilder
             ->expects(self::once())
+            ->method('getFirstResult')
+            ->willReturn(8);
+
+        $setBuilder
+            ->expects(self::once())
+            ->method('getMaxResults')
+            ->willReturn(4);
+
+        $setBuilder
+            ->expects(self::once())
             ->method('fetchAllAssociative')
             ->willReturn(
                 [

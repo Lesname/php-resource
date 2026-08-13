@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace LesResource\Set;
 
 use Override;
-use Exception;
 use Traversable;
 use EmptyIterator;
 use IteratorAggregate;
