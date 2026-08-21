@@ -2,7 +2,7 @@
   "name": "lesname/resource",
   "license": "MIT",
   "require": {
-    "php": "^8.4.0",
+    "php": "^8.5.0",
     "ext-ctype": "*",
 
     "lesname/hydrator": "^0.4.0",
@@ -10,9 +10,9 @@
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^4.0.0",
-    "phpunit/phpunit": "^12.0.0",
+    "phpunit/phpunit": "^13.0.0",
 
-    "vimeo/psalm": "^7.0.0-beta9",
+    "vimeo/psalm": "^7.0.0-beta19",
 
     "phpstan/phpstan": "^2.0.0",
     "phpstan/extension-installer": "^1.4.0",

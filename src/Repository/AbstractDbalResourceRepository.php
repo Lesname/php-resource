@@ -9,7 +9,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use JsonException;
-use LesDatabase\Query\Builder\Helper\LabelHelper;
 use LesResource\Repository\Parameters\Identifiers;
 use LesDatabase\Query\Builder\Applier\PaginateApplier;
 use LesHydrator\Hydrator;
@@ -50,13 +49,22 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
      */
     abstract protected function getNoResourceWithIdClass(): string;
 
+    /** @deprecated use $db instead */
+    protected readonly Connection $connection;
+
     /**
      * @psalm-mutation-free
      */
     public function __construct(
-        protected Connection $connection,
-        protected Hydrator $hydrator
-    ) {}
+        protected readonly Connection $db,
+        protected readonly Hydrator $hydrator
+    ) {
+        /**
+         * @psalm-suppress DeprecatedProperty
+         * @phpstan-ignore property.deprecated
+         */
+        $this->connection = $db;
+    }
 
     /**
      * @throws Exception
@@ -153,7 +161,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
     #[Override]
     public function getCurrentVersion(Identifier $id): int
     {
-        $builder = $this->connection->createQueryBuilder();
+        $builder = $this->db->createQueryBuilder();
         $builder->select('version');
         $this->applyWhereId($builder, $id);
 
@@ -270,7 +278,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
 
     protected function createResourceBuilder(): QueryBuilder
     {
-        $builder = $this->connection->createQueryBuilder();
+        $builder = $this->db->createQueryBuilder();
         $this->getResourceApplier()->apply($builder);
 
         return $builder;
@@ -278,7 +286,7 @@ abstract class AbstractDbalResourceRepository implements ResourceRepository
 
     protected function createBaseBuilder(): QueryBuilder
     {
-        $builder = $this->connection->createQueryBuilder();
+        $builder = $this->db->createQueryBuilder();
 
         $applier = $this->getResourceApplier();
         $builder->from(
