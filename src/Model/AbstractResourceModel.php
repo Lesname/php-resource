@@ -8,11 +8,12 @@ use Override;
 use LesValueObject\Composite\ForeignReference;
 use LesValueObject\String\Format\Resource\Type;
 use LesValueObject\String\Format\Resource\Identifier;
+use LesValueObject\Composite\AbstractCompositeValueObject;
 
 /**
  * @psalm-immutable
  */
-abstract class AbstractResourceModel implements ResourceModel
+abstract class AbstractResourceModel extends AbstractCompositeValueObject implements ResourceModel
 {
     public function __construct(
         #[Override]
